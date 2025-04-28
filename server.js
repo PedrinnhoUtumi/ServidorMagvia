@@ -3,12 +3,12 @@ const cors = require('cors');
 const axios = require('axios');
 
 const app = express();
-const port = process.env.PORT || 1883;
+const PORT = process.env.PORT || 1883;
 
 app.use(cors());
 app.use(express.json());
 
-const url = 'http://192.168.10.250:5654/db/query';
+const url = 'http://192.168.10.250:5654/web/ui';
 
 app.get('/', (req, res) => {
     res.send(`
@@ -51,8 +51,8 @@ app.get('/api/machbase', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Servidor Node.js rodando na porta ${port}`);
+app.listen(PORT, () => {
+    console.log(`Servidor Node.js rodando na porta ${PORT}`);
 });
 
 
