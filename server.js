@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 1883;
 app.use(cors());
 app.use(express.json());
 
-const url = 'http://192.168.10.250:5654/web/ui';
+const url = 'https://64b7-177-125-212-179.ngrok-free.app/db/query';
 
 // app.get('/', (req, res) => {
 //     res.send(`
@@ -56,3 +56,6 @@ app.listen(PORT, () => {
 });
 
 
+// SALVANDO COMANDOS
+// ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
+// ngrok http 192.168.10.250:5654
