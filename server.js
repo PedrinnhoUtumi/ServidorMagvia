@@ -43,7 +43,7 @@ app.get('/api/machbase', (req, res) => {
         }
     })
     .then((response) => {
-        res.json(response.data);
+        res.json({message: response.data});
     })
     .catch((error) => {
         console.error('Erro ao conectar com o Machbase:', error.message);
