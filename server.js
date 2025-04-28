@@ -10,24 +10,24 @@ app.use(express.json());
 
 const url = 'http://192.168.10.250:5654/web/ui';
 
-app.get('/', (req, res) => {
-    res.send(`
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta name="theme-color" content="#FFAA00" />
-            <title>Informações do ISBN</title>
-        </head>
-        <body>
-            <h1 style='background-color: #FFAA00;'>Olá Mundo</h1>
-        </body>
-        </html>
-    `);
-});
+// app.get('/', (req, res) => {
+//     res.send(`
+//         <!DOCTYPE html>
+//         <html lang="pt-BR">
+//         <head>
+//             <meta charset="UTF-8">
+//             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//             <meta name="theme-color" content="#FFAA00" />
+//             <title>Informações do ISBN</title>
+//         </head>
+//         <body>
+//             <h1 style='background-color: #FFAA00;'>Olá Mundo</h1>
+//         </body>
+//         </html>
+//     `);
+// });
 
-app.get('/api/machbase', (req, res) => {
+app.get('/', (req, res) => {
     const query = {
         q: `SELECT * FROM ARCOND`,
         format: "json",
