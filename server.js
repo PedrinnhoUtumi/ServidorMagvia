@@ -27,28 +27,37 @@ app.get('/', (req, res) => {
     `);
 });
 
-app.get('/api', (req, res) => {
-    const query = {
-        q: `SELECT * FROM ACTIVEPOWER`,
-        format: "json",
-        timeformat: "default",
-        tz: "local",
-        precision: 2,
-    };
+app.get('/api', async (req, res) => {
+  const tabelas = ['ACTIVEPOWER', 'VOLTAGE', 'CURRENT'];
 
-    axios.post(url, query, {
-        auth: {
-            username: 'sys',
-            password: 'manager',
-        }
-    })
-    .then((response) => {
-        res.json({message: response.data});
-    })
-    .catch((error) => {
-        console.error('Erro ao conectar com o Machbase:', error.message);
-        res.status(500).json({ error: 'Erro ao conectar com o Machbase' });
-    });
+  try {
+      const resultados = await Promise.all(tabelas.map(tabela => {
+          const query = {
+              q: `SELECT * FROM ${tabela}`,
+              format: "json",
+              timeformat: "default",
+              tz: "local",
+              precision: 2,
+          };
+
+          return axios.post(url, query, {
+              auth: {
+                  username: 'sys',
+                  password: 'manager',
+              }
+          });
+      }));
+
+      const dados = {};
+      tabelas.forEach((tabela, index) => {
+          dados[tabela] = resultados[index].data;
+      });
+
+      res.json({ message: dados });
+  } catch (error) {
+      console.error("Erro ao buscar múltiplas tabelas:", error.message);
+      res.status(500).json({ error: 'Erro ao buscar múltiplas tabelas' });
+  }
 });
 
 app.listen(PORT, () => {
