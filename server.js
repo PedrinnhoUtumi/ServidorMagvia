@@ -29,7 +29,7 @@ app.get('/', (req, res) => {
 
 app.get('/api', (req, res) => {
     const query = {
-        q: `SELECT * FROM TAG`,
+        q: `SELECT * FROM ACTIVEPOWER`,
         format: "json",
         timeformat: "default",
         tz: "local",
