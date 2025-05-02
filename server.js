@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api', async (req, res) => {
-  const tabelas = ['ACTIVEPOWER', 'VOLTAGE', 'CURRENT', 'BUSINESS', 'CONSUMPTION', 'GENERATED'];
+  const tabelas = ['ACTIVEPOWER', 'VOLTAGE', 'CURRENT', 'BUSINESS', 'CONSUMPTION', 'GENERATED', 'MYUSER'];
 
   try {
       const resultados = await Promise.all(tabelas.map(tabela => {
