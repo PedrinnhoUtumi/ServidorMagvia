@@ -71,7 +71,7 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.get("/api/:tabela", async (req, res) => {
+app.post("/api/:tabela", async (req, res) => {
   const { tabela } = req.params;
   const { nome, email, senha, role, account } = req.body
   const tabelas = [tabela];
