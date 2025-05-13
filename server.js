@@ -71,15 +71,13 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.post("/api/:tabela", async (req, res) => {
-  const { tabela } = req.params;
+app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body
-  const tabelas = [tabela];
 
   try {
     const query = `
-    INSERT INTO ${tabela} (nome, email, senha, role, account)
-    VALUES ('${nome}', '${email}', '${senha}', '${role}', '${account}')
+    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT, LASTLOGIN, CREATED)
+    VALUES ('3', '${nome}', '${email}', '${senha}', '${role}', '${account}', '2025-05-06 14:42:00', '2025-05-06 14:42:00')
   `;
     const response = await axios.post(url, { q: query }, {
         auth: {
