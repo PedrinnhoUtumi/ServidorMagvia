@@ -73,34 +73,22 @@ app.get("/api", async (req, res) => {
 
 app.get("/api/:tabela", async (req, res) => {
   const { tabela } = req.params;
+  const { nome, email, senha, role, account } = req.body
   const tabelas = [tabela];
 
   try {
-    const resultados = await Promise.all(
-      tabelas.map((tabela) => {
-        const query = {
-          q: `SELECT * FROM ${tabela}`,
-          format: "json",
-          timeformat: "default",
-          tz: "local",
-          precision: 2,
-        };
-
-        return axios.post(url, query, {
-          auth: {
-            username: "sys",
-            password: "manager",
-          },
-        });
-      })
-    );
-
-    const dados = {};
-    tabelas.forEach((tabela, index) => {
-      dados[tabela] = resultados[index].data;
+    const query = `
+    INSERT INTO ${tabela} (nome, email, senha, role, account)
+    VALUES ('${nome}', '${email}', '${senha}', '${role}', '${account}')
+  `;
+    const response = await axios.post(url, { q: query }, {
+        auth: {
+        username: "sys",
+        password: "manager"
+        }
     });
+    res.status(201).json({ message: "Usuário criado com sucesso", response: response.data });
 
-    res.json({ message: dados });
   } catch (error) {
     console.error("Erro ao buscar múltiplas tabelas:", error.message);
     res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
