@@ -72,21 +72,42 @@ app.get("/api", async (req, res) => {
 });
 
 app.post("/api/MYUSER", async (req, res) => {
-  const { nome, email, senha, role, account } = req.body
+  const { nome, email, senha, role, account } = req.body;
 
   try {
-    const query = `
-    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT, LASTLOGIN, CREATED)
-    VALUES ('3', '${nome}', '${email}', '${senha}', '${role}', '${account}', '2025-05-06 14:42:00', '2025-05-06 14:42:00')
-  `;
-    const response = await axios.post(url, { q: query }, {
+    const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
+    const maxIdResponse = await axios.post(
+      url,
+      { q: maxIdQuery },
+      {
         auth: {
-        username: "sys",
-        password: "manager"
-        }
-    });
-    res.status(201).json({ message: "Usuário criado com sucesso", response: response.data });
-
+          username: "sys",
+          password: "manager",
+        },
+      }
+    );
+    let novoId = 1;
+    const resultado = maxIdResponse.data;
+    if (resultado && resultado[0] && resultado[0].MAX_ID != null) {
+      novoId = resultado[0].MAX_ID + 1;
+    }
+    const query = `
+    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
+    VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
+  `;
+    const response = await axios.post(
+      url,
+      { q: query },
+      {
+        auth: {
+          username: "sys",
+          password: "manager",
+        },
+      }
+    );
+    res
+      .status(201)
+      .json({ message: "Usuário criado com sucesso", response: response.data });
   } catch (error) {
     console.error("Erro ao buscar múltiplas tabelas:", error.message);
     res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
