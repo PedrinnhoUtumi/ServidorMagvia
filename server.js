@@ -75,6 +75,7 @@ app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
 
   try {
+    // Consulta para obter o maior ID atual
     const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
     const maxIdResponse = await axios.post(
       url,
@@ -86,16 +87,25 @@ app.post("/api/MYUSER", async (req, res) => {
         },
       }
     );
+
     let novoId = 1;
+
+    // Verificando se a resposta tem dados válidos
     const resultado = maxIdResponse.data;
-    if (resultado && resultado[0] && resultado[0].MAX_ID != null) {
-      novoId = resultado[0].MAX_ID + 1;
+
+    if (Array.isArray(resultado) && resultado.length > 0) {
+      const maxId = resultado[0]["MAX_ID"];
+      if (maxId !== null && !isNaN(Number(maxId))) {
+        novoId = Number(maxId) + 1;
+      }
     }
+
     const query = `
-    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-    VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
-  `;
-    const response = await axios.post(
+      INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
+      VALUES (${novoId}, '${nome}', '${email}', '${senha}', '${role}', '${account}')
+    `;
+
+    const insertResponse = await axios.post(
       url,
       { q: query },
       {
@@ -105,18 +115,18 @@ app.post("/api/MYUSER", async (req, res) => {
         },
       }
     );
-    res
-      .status(201)
-      .json({ message: "Usuário criado com sucesso", response: response.data });
+
+    res.status(201).json({
+      message: "Usuário criado com sucesso",
+      response: insertResponse.data,
+    });
+
   } catch (error) {
-    console.error("Erro ao buscar múltiplas tabelas:", error.message);
-    res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
+    console.error("Erro ao criar usuário:", error.message);
+    res.status(500).json({ error: "Erro ao criar usuário" });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor Node.js rodando na porta ${PORT}`);
-});
 
 // SALVANDO COMANDOS
 // ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
