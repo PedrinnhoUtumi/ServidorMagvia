@@ -71,11 +71,10 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.post("/api/MYUSER", async (req, res) => {
+app.get("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
 
   try {
-    // Consulta para obter o maior ID atual
     const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
     const maxIdResponse = await axios.post(
       url,
@@ -90,15 +89,20 @@ app.post("/api/MYUSER", async (req, res) => {
 
     let novoId = 1;
 
-    // Verificando se a resposta tem dados válidos
-    const resultado = maxIdResponse.data;
+    console.log("Resposta da consulta de ID:", maxIdResponse.data.data.rows[0][0]);
+    
+    const resultado = maxIdResponse.data.data.rows[0][0];
 
-    if (Array.isArray(resultado) && resultado.length > 0) {
-      const maxId = resultado[0]["MAX_ID"];
+    if (resultado) {
+      const maxId = resultado;
+      console.log("Maior ID encontrado:", maxId);
+      
       if (maxId !== null && !isNaN(Number(maxId))) {
         novoId = Number(maxId) + 1;
       }
     }
+    console.log("Novo ID:", novoId);
+    
 
     const query = `
       INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
@@ -126,6 +130,10 @@ app.post("/api/MYUSER", async (req, res) => {
     res.status(500).json({ error: "Erro ao criar usuário" });
   }
 });
+
+// app.listen(PORT, () => {
+//   console.log(`Servidor rodando na porta ${PORT}`);
+// })
 
 
 // SALVANDO COMANDOS
