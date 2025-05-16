@@ -86,30 +86,21 @@ app.post("/api/MYUSER", async (req, res) => {
         },
       }
     );
-
     let novoId = 1;
-
-    console.log("Resposta da consulta de ID:", maxIdResponse.data.data.rows[0][0]);
+    console.log(maxIdResponse.data.data.rows[0][0]);
     
     const resultado = maxIdResponse.data.data.rows[0][0];
-
     if (resultado) {
-      const maxId = resultado;
-      console.log("Maior ID encontrado:", maxId);
-      
-      if (maxId !== null && !isNaN(Number(maxId))) {
-        novoId = Number(maxId) + 1;
-      }
+      novoId = resultado + 1;
     }
-    console.log("Novo ID:", novoId);
+
+    console.log(`Novo ID: ${novoId}`);
     
-
     const query = `
-      INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-      VALUES ('9', '${nome}', '${email}', '${senha}', '${role}', '${account}')
-    `;
-
-    const insertResponse = await axios.post(
+    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
+    VALUES ('8', '${nome}', '${email}', '${senha}', '${role}', '${account}')
+  `;
+    const response = await axios.post(
       url,
       { q: query },
       {
@@ -119,22 +110,18 @@ app.post("/api/MYUSER", async (req, res) => {
         },
       }
     );
-
-    res.status(201).json({
-      message: "Usuário criado com sucesso",
-      response: insertResponse.data,
-    });
-
+    res
+      .status(201)
+      .json({ message: "Usuário criado com sucesso", response: response.data });
   } catch (error) {
-    console.error("Erro ao criar usuário:", error.message);
-    res.status(500).json({ error: "Erro ao criar usuário" });
+    console.error("Erro ao buscar múltiplas tabelas:", error.message);
+    res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
   }
 });
 
-// app.listen(PORT, () => {
-//   console.log(`Servidor rodando na porta ${PORT}`);
-// })
-
+app.listen(PORT, () => {
+  console.log(`Servidor Node.js rodando na porta ${PORT}`);
+});
 
 // SALVANDO COMANDOS
 // ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
