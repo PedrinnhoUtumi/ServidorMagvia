@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 1883;
 app.use(cors());
 app.use(express.json());
 
-const url = "https://a3b6-177-125-212-179.ngrok-free.app/db/query";
+const url = "https://080c-177-125-212-179.ngrok-free.app/db/query";
 
 app.get("/", (req, res) => {
   res.send(`
