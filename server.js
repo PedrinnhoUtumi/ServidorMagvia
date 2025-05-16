@@ -71,7 +71,7 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.get("/api/MYUSER", async (req, res) => {
+app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
 
   try {
