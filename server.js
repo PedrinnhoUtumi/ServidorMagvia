@@ -93,7 +93,7 @@ app.post("/api/MYUSER", async (req, res) => {
     }
     const query = `
     INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-    VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
+    VALUES ('7', '${nome}', '${email}', '${senha}', '${role}', '${account}')
   `;
     const response = await axios.post(
       url,
