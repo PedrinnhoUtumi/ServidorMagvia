@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 1883;
 
 app.use(cors());
 app.use(express.json());
-
+const urlMQTT = "mqtt://192.168.10.250:5653";
 const url = "https://080c-177-125-212-179.ngrok-free.app/db/query";
 
 app.get("/", (req, res) => {
