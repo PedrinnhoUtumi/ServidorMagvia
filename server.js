@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 1883;
 app.use(cors());
 app.use(express.json());
 const urlMQTT = "mqtt://192.168.10.250:5653";
-const url = "https://537c-177-125-212-179.ngrok-free.app /db/query";
+const url = "https://537c-177-125-212-179.ngrok-free.app/db/query";
 
 app.get("/", (req, res) => {
   res.send(`
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="theme-color" content="#FFAA00" />
-            <title>Informações do ISBN</title>
+            <title>API Machbase</title>
         </head>
         <body>
             <h1 style='background-color: #FFAA00;'>Olá Mundo</h1>
