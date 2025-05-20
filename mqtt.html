@@ -1,0 +1,102 @@
+<!-- <html>
+<head>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <div id="rspQuery">Aguardando dados...</div>
+    <script>
+        const url = 'ws://192.168.10.250:5654/web/api/mqtt';
+        const options = {
+            clean: true,
+            connectTimeout: 4000,
+            protocolVersion: 5,
+        };
+        const client = mqtt.connect(url, options);
+
+        client.on('connect', () => {
+            console.log('Conectado ao broker MQTT');
+            client.subscribe('/api/energia/monitor', (err) => {
+                if (!err) {
+                    console.log('Inscrito no tópico /api/energia/monitor');
+                } else {
+                    console.error('Erro ao inscrever:', err);
+                }
+            });
+        });
+
+        client.on('message', (topic, message) => {
+            if (topic === '/api/energia/monitor') {
+                console.log('Mensagem recebida:', message.toString());
+                document.getElementById('rspQuery').innerHTML = `<pre>${message.toString()}</pre>`;
+            }
+        });
+
+        client.on('error', (err) => {
+            console.error('Erro MQTT:', err);
+        });
+    </script>
+</body>
+</html> -->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoramento de Energia</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+    <h3>Dados Recebidos:</h3>
+    <div id="rspQuery">Aguardando dados...</div>
+
+    <script>
+        const url = 'ws://192.168.10.250:5654/web/api/mqtt';
+        const options = {
+            clean: true,
+            connectTimeout: 4000,
+            protocolVersion: 5,
+        };
+        const client = mqtt.connect(url, options);
+
+        client.on('connect', () => {
+            console.log('Conectado ao broker MQTT');
+            client.subscribe('/api/energia/monitor', (err) => {
+                if (!err) {
+                    console.log('Inscrito no tópico /api/energia/monitor');
+                } else {
+                    console.error('Erro ao inscrever:', err);
+                }
+            });
+        });
+
+        client.on('message', (topic, message) => {
+            if (topic === '/api/energia/monitor') {
+                const dados = JSON.parse(message.toString());
+                console.log('Objeto recebido:', dados);
+
+                // Exibe os dados como estão (sem renomear)
+                let html = `<b>Última atualização: ${new Date().toLocaleTimeString()}</b><br><table border="1" cellpadding="4" cellspacing="0">`;
+
+                for (let chave in dados) {
+                    html += `<tr><td><strong>${chave}</strong></td><td>${dados[chave]}</td></tr>`;
+                }
+
+                html += `</table>`;
+                document.getElementById('rspQuery').innerHTML = html;
+
+                // Exemplo de envio para o backend
+                fetch('http://localhost:3000/api/salvar-medicao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                })
+                .then(res => res.json())
+                .then(res => console.log('Dados enviados ao backend:', res))
+                .catch(err => console.error('Erro ao enviar para API:', err));
+            }
+        });
+
+        client.on('error', (err) => {
+            console.error('Erro MQTT:', err);
+        });
+    </script>
+</body>
+</html>

@@ -1,13 +1,21 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-
+const handlebars = require("express-handlebars");
+const bodyParser = require('body-parser')
 const app = express();
 const PORT = process.env.PORT || 1883;
 
+app.engine('handlebars', handlebars.engine({defaultLayout: 'main'}))
+app.set('view engine', 'handlebars')
+app.set('views', './views')
+
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
+
 app.use(cors());
 app.use(express.json());
-const urlMQTT = "mqtt://192.168.10.250:5653";
+
 const url = "https://537c-177-125-212-179.ngrok-free.app/db/query";
 
 app.get("/", (req, res) => {
@@ -126,3 +134,5 @@ app.listen(PORT, () => {
 // SALVANDO COMANDOS
 // ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
 // ngrok http 192.168.10.250:5654
+
+
