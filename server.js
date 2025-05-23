@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 app.use(cors());
 app.use(express.json());
 
-const url = "https://537c-177-125-212-179.ngrok-free.app/db/query";
+const url = "https://689c-177-125-212-179.ngrok-free.app/db/query";
 
 app.get("/", (req, res) => {
   res.send(`
