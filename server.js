@@ -1,20 +1,57 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-const handlebars = require("express-handlebars");
-const bodyParser = require('body-parser')
+const bodyParser = require("body-parser");
 const app = express();
 const PORT = process.env.PORT || 1883;
+const mqtt = require("mqtt");
 
-app.engine('handlebars', handlebars.engine({defaultLayout: 'main'}))
-app.set('view engine', 'handlebars')
-app.set('views', './views')
-
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(cors());
 app.use(express.json());
+
+let ultimoDadoMQTT = {}; 
+
+const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
+const mqttOptions = {
+  clean: true,
+  connectTimeout: 4000,
+  protocolVersion: 5,
+};
+
+const mqttClient = mqtt.connect(mqttUrl, mqttOptions);
+
+mqttClient.on("connect", () => {
+  console.log("Conectado ao broker MQTT");
+  mqttClient.subscribe("/api/energia/monitor", (err) => {
+    if (!err) {
+      console.log("Inscrito no tópico /api/energia/monitor");
+    } else {
+      console.error("Erro ao se inscrever:", err);
+    }
+  });
+});
+
+mqttClient.on("message", (topic, message) => {
+  console.log("Tópico:", topic);
+  console.log("Mensagem recebida:", message.toString());
+  if (topic === "/api/energia/monitor") {
+    const dados = JSON.parse(message.toString());
+    console.log("Dados recebidos:", dados);
+    ultimoDadoMQTT = {
+      timestamp: new Date().toISOString(),
+      ...dados,
+    };
+    console.log("Último dado MQTT:", ultimoDadoMQTT);
+  }
+});
+
+mqttClient.on("error", (err) => {
+  console.error("Erro no MQTT:", err.message);
+});
+
 
 const url = "https://689c-177-125-212-179.ngrok-free.app/db/query";
 
@@ -79,6 +116,52 @@ app.get("/api", async (req, res) => {
   }
 });
 
+app.get("/monitor", (req, res) => {
+  console.log(ultimoDadoMQTT);
+  if (Object.keys(ultimoDadoMQTT).length === 0) {
+    
+    return res.send("ERRO");
+  }
+
+  const dados = {
+    potenciaAtiva: {
+      pa: parseFloat(ultimoDadoMQTT.pa),
+      pb: parseFloat(ultimoDadoMQTT.pb),
+      pc: parseFloat(ultimoDadoMQTT.pc),
+      pt: parseFloat(ultimoDadoMQTT.pt),
+    },
+    potenciaReativa: {
+      qa: parseFloat(ultimoDadoMQTT.qa),
+      qb: parseFloat(ultimoDadoMQTT.qb),
+      qc: parseFloat(ultimoDadoMQTT.qc),
+      qt: parseFloat(ultimoDadoMQTT.qt),
+    },
+    tensoes: {
+      uarms: parseFloat(ultimoDadoMQTT.uarms),
+      ubrms: parseFloat(ultimoDadoMQTT.ubrms),
+      ucrms: parseFloat(ultimoDadoMQTT.ucrms),
+    },
+    correntes: {
+      iarms: parseFloat(ultimoDadoMQTT.iarms),
+      ibrms: parseFloat(ultimoDadoMQTT.ibrms),
+      icrms: parseFloat(ultimoDadoMQTT.icrms),
+      itrms: parseFloat(ultimoDadoMQTT.itrms),
+    },
+    fatorPotencia: {
+      pfa: parseFloat(ultimoDadoMQTT.pfa),
+      pfb: parseFloat(ultimoDadoMQTT.pfb),
+      pfc: parseFloat(ultimoDadoMQTT.pfc),
+      pft: parseFloat(ultimoDadoMQTT.pft),
+    },
+    frequencia: {
+      freq: parseFloat(ultimoDadoMQTT.freq),
+    },
+    timestamp: ultimoDadoMQTT.timestamp
+  };
+
+  res.json({ message: dados });
+});
+
 app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
 
@@ -96,14 +179,14 @@ app.post("/api/MYUSER", async (req, res) => {
     );
     let novoId = 1;
     console.log(maxIdResponse.data.data.rows[0][0]);
-    
+
     const resultado = maxIdResponse.data.data.rows[0][0];
     if (resultado) {
       novoId = resultado + 1;
     }
 
     console.log(`Novo ID: ${novoId}`);
-    
+
     const query = `
     INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
     VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
@@ -134,5 +217,3 @@ app.listen(PORT, () => {
 // SALVANDO COMANDOS
 // ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
 // ngrok http 192.168.10.250:5654
-
-
