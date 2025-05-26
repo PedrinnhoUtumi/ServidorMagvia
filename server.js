@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const PORT = process.env.PORT || 1883;
 const mqtt = require("mqtt");
+const activePowerController = require("./controller/activePower.controller");
+const activePower = require("./entities/activePower");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -14,7 +16,7 @@ app.use(express.json());
 
 let ultimoDadoMQTT = {}; 
 
-const url = "https://4877-177-125-212-179.ngrok-free.app/db/query";
+const url = "https://ce3b-177-125-212-179.ngrok-free.app/db/query";
 const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
 // const mqttUrl = "ws://serveo.net:5654/web/api/mqtt";
 
@@ -210,6 +212,17 @@ app.post("/api/MYUSER", async (req, res) => {
     console.error("Erro ao buscar múltiplas tabelas:", error.message);
     res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
   }
+});
+
+app.get("/api/ACTIVEPOWER", (req, res) => {
+  res.json({ message: ultimoDadoMQTT });
+});
+
+app.post("/api/ACTIVEPOWER", (req, res) => {
+  const resultado = activePowerController.adicionaActivePower(ultimoDadoMQTT);
+  resultado.then(resp => {
+    res.status(201).json({ message: "Potência ativa salva com sucesso", data: resp });
+  })
 });
 
 app.listen(PORT, () => {
