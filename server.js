@@ -16,7 +16,7 @@ app.use(express.json());
 
 let ultimoDadoMQTT = {}; 
 
-const url = "http://192.168.10.250:5654/db/query";
+const url = "https://7289-177-125-212-179.ngrok-free.app/db/query";
 const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
 // const mqttUrl = "ws://serveo.net:5654/web/api/mqtt";
 
@@ -50,6 +50,13 @@ mqttClient.on("message", (topic, message) => {
       ...dados,
     };
     console.log("Último dado MQTT:", ultimoDadoMQTT);
+    activePowerController.adicionaActivePower(ultimoDadoMQTT)
+      .then(() => {
+        console.log("Dados salvos com sucesso no banco de dados.");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar dados no banco de dados:", error);
+      });
   }
 });
 
@@ -92,7 +99,7 @@ app.get("/api", async (req, res) => {
     const resultados = await Promise.all(
       tabelas.map((tabela) => {
         const query = {
-          q: `SELECT * FROM ${tabela}`,
+          q: `SELECT * FROM ${tabela} ORDER BY ID`,
           format: "json",
           timeformat: "default",
           tz: "local",
@@ -107,6 +114,8 @@ app.get("/api", async (req, res) => {
         });
       })
     );
+    console.log("Resultados obtidos:", resultados);
+    
 
     const dados = {};
     tabelas.forEach((tabela, index) => {
@@ -115,7 +124,7 @@ app.get("/api", async (req, res) => {
 
     res.json({ message: dados });
   } catch (error) {
-    console.error("Erro ao buscar múltiplas tabelas:", error.message);
+    console.error("Erro ao buscar múltiplas tabelas:", error.message.status);
     res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
   }
 });
@@ -209,20 +218,9 @@ app.post("/api/MYUSER", async (req, res) => {
       .status(201)
       .json({ message: "Usuário criado com sucesso", response: response.data });
   } catch (error) {
-    console.error("Erro ao buscar múltiplas tabelas:", error.message);
-    res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
+    console.error("Erro ao buscar myuser:", error.message);
+    res.status(500).json({ error: "Erro ao buscar myuser" });
   }
-});
-
-app.get("/api/ACTIVEPOWER", (req, res) => {
-  res.json({ message: ultimoDadoMQTT });
-});
-
-app.post("/api/ACTIVEPOWER", (req, res) => {
-  const resultado = activePowerController.adicionaActivePower(ultimoDadoMQTT);
-  resultado.then(resp => {
-    res.status(201).json({ message: "Potência ativa salva com sucesso", data: resp });
-  })
 });
 
 app.listen(PORT, () => {
