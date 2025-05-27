@@ -16,7 +16,7 @@ app.use(express.json());
 
 let ultimoDadoMQTT = {}; 
 
-const url = "https://ce3b-177-125-212-179.ngrok-free.app/db/query";
+const url = "http://192.168.10.250:5654/db/query";
 const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
 // const mqttUrl = "ws://serveo.net:5654/web/api/mqtt";
 
