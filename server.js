@@ -92,14 +92,13 @@ app.get("/api", async (req, res) => {
     "CONSUMPTION",
     "GENERATED",
     "MYUSER",
-    "USER_BUSINESS",
   ];
 
   try {
     const resultados = await Promise.all(
       tabelas.map((tabela) => {
         const query = {
-          q: `SELECT * FROM ${tabela}`,
+          q: `SELECT * FROM ${tabela} ORDER BY ID`,
           format: "json",
           timeformat: "default",
           tz: "local",
