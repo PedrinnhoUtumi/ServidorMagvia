@@ -6,7 +6,9 @@ const app = express();
 const PORT = process.env.PORT || 1883;
 const mqtt = require("mqtt");
 const activePowerController = require("./controller/activePower.controller");
+const voltageController = require("./controller/voltage.controller");
 const activePower = require("./entities/activePower");
+const voltage = require("./entities/voltage");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -49,7 +51,15 @@ mqttClient.on("message", (topic, message) => {
       timestamp: new Date().toISOString(),
       ...dados,
     };
-    console.log("Último dado MQTT:", ultimoDadoMQTT);
+
+    voltageController.adicionaVoltage(ultimoDadoMQTT)
+      .then(() => {
+        console.log("Dados de tensão salvos com sucesso no banco de dados.");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar dados de tensão no banco de dados:", error);
+      })
+
     activePowerController.adicionaActivePower(ultimoDadoMQTT)
       .then(() => {
         console.log("Dados salvos com sucesso no banco de dados.");
@@ -57,6 +67,7 @@ mqttClient.on("message", (topic, message) => {
       .catch((error) => {
         console.error("Erro ao salvar dados no banco de dados:", error);
       });
+
   }
 });
 
@@ -92,6 +103,7 @@ app.get("/api", async (req, res) => {
     "CONSUMPTION",
     "GENERATED",
     "MYUSER",
+    "USER_BUSINESS",
   ];
 
   try {
