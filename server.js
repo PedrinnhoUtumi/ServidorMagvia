@@ -12,6 +12,7 @@ const voltageController = require("./controller/voltage.controller");
 const currentController = require("./controller/current.controller");
 const consumptionController = require("./controller/consumption.controller");
 const generationController = require("./controller/generation.controller");
+const todasAsTabelasController = require("./controller/todasAsTabelas.controller");
 
 const activePower = require("./entities/activePower");
 const voltage = require("./entities/voltage");
@@ -128,97 +129,53 @@ app.get("/", (req, res) => {
     `);
 });
 
-app.get("/api", async (req, res) => {
-  const tabelas = [
-    "ACTIVEPOWER",
-    "VOLTAGE",
-    "CURRENT",
-    "BUSINESS",
-    "CONSUMPTION",
-    "GENERATION",
-    "MYUSER",
-    "USER_BUSINESS",
-  ];
+app.get("/api", todasAsTabelasController.listaTodasAsTabelas);
 
-  try {
-    const resultados = await Promise.all(
-      tabelas.map((tabela) => {
-        const query = {
-          q: `SELECT * FROM ${tabela} ORDER BY ID`,
-          format: "json",
-          timeformat: "default",
-          tz: "local",
-          precision: 2,
-        };
-
-        return axios.post(url, query, {
-          auth: {
-            username: "sys",
-            password: "manager",
-          },
-        });
-      })
-    );
-    console.log("Resultados obtidos:", resultados);
+// app.get("/monitor", (req, res) => {
+//   console.log(ultimoDadoMQTT);
+//   if (Object.keys(ultimoDadoMQTT).length === 0) {
     
+//     return res.send("ERRO");
+//   }
 
-    const dados = {};
-    tabelas.forEach((tabela, index) => {
-      dados[tabela] = resultados[index].data;
-    });
+//   const dados = {
+//     potenciaAtiva: {
+//       pa: parseFloat(ultimoDadoMQTT.pa),
+//       pb: parseFloat(ultimoDadoMQTT.pb),
+//       pc: parseFloat(ultimoDadoMQTT.pc),
+//       pt: parseFloat(ultimoDadoMQTT.pt),
+//     },
+//     potenciaReativa: {
+//       qa: parseFloat(ultimoDadoMQTT.qa),
+//       qb: parseFloat(ultimoDadoMQTT.qb),
+//       qc: parseFloat(ultimoDadoMQTT.qc),
+//       qt: parseFloat(ultimoDadoMQTT.qt),
+//     },
+//     tensoes: {
+//       uarms: parseFloat(ultimoDadoMQTT.uarms),
+//       ubrms: parseFloat(ultimoDadoMQTT.ubrms),
+//       ucrms: parseFloat(ultimoDadoMQTT.ucrms),
+//     },
+//     correntes: {
+//       iarms: parseFloat(ultimoDadoMQTT.iarms),
+//       ibrms: parseFloat(ultimoDadoMQTT.ibrms),
+//       icrms: parseFloat(ultimoDadoMQTT.icrms),
+//       itrms: parseFloat(ultimoDadoMQTT.itrms),
+//     },
+//     fatorPotencia: {
+//       pfa: parseFloat(ultimoDadoMQTT.pfa),
+//       pfb: parseFloat(ultimoDadoMQTT.pfb),
+//       pfc: parseFloat(ultimoDadoMQTT.pfc),
+//       pft: parseFloat(ultimoDadoMQTT.pft),
+//     },
+//     frequencia: {
+//       freq: parseFloat(ultimoDadoMQTT.freq),
+//     },
+//     timestamp: ultimoDadoMQTT.timestamp
+//   };
 
-    res.json({ message: dados });
-  } catch (error) {
-    console.error("Erro ao buscar múltiplas tabelas:", error.message.status);
-    res.status(500).json({ error: "Erro ao buscar múltiplas tabelas" });
-  }
-});
-
-app.get("/monitor", (req, res) => {
-  console.log(ultimoDadoMQTT);
-  if (Object.keys(ultimoDadoMQTT).length === 0) {
-    
-    return res.send("ERRO");
-  }
-
-  const dados = {
-    potenciaAtiva: {
-      pa: parseFloat(ultimoDadoMQTT.pa),
-      pb: parseFloat(ultimoDadoMQTT.pb),
-      pc: parseFloat(ultimoDadoMQTT.pc),
-      pt: parseFloat(ultimoDadoMQTT.pt),
-    },
-    potenciaReativa: {
-      qa: parseFloat(ultimoDadoMQTT.qa),
-      qb: parseFloat(ultimoDadoMQTT.qb),
-      qc: parseFloat(ultimoDadoMQTT.qc),
-      qt: parseFloat(ultimoDadoMQTT.qt),
-    },
-    tensoes: {
-      uarms: parseFloat(ultimoDadoMQTT.uarms),
-      ubrms: parseFloat(ultimoDadoMQTT.ubrms),
-      ucrms: parseFloat(ultimoDadoMQTT.ucrms),
-    },
-    correntes: {
-      iarms: parseFloat(ultimoDadoMQTT.iarms),
-      ibrms: parseFloat(ultimoDadoMQTT.ibrms),
-      icrms: parseFloat(ultimoDadoMQTT.icrms),
-      itrms: parseFloat(ultimoDadoMQTT.itrms),
-    },
-    fatorPotencia: {
-      pfa: parseFloat(ultimoDadoMQTT.pfa),
-      pfb: parseFloat(ultimoDadoMQTT.pfb),
-      pfc: parseFloat(ultimoDadoMQTT.pfc),
-      pft: parseFloat(ultimoDadoMQTT.pft),
-    },
-    frequencia: {
-      freq: parseFloat(ultimoDadoMQTT.freq),
-    },
-    timestamp: ultimoDadoMQTT.timestamp
-  };
-
-  res.json({ message: dados });
-});
+//   res.json({ message: dados });
+// });
 
 app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
