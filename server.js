@@ -11,11 +11,13 @@ const activePowerController = require("./controller/activePower.controller");
 const voltageController = require("./controller/voltage.controller");
 const currentController = require("./controller/current.controller");
 const consumptionController = require("./controller/consumption.controller");
+const generationController = require("./controller/generation.controller");
 
 const activePower = require("./entities/activePower");
 const voltage = require("./entities/voltage");
 const current = require("./entities/current");
 const consumption = require("./entities/consumption");
+const generation = require("./entities/generation");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -68,7 +70,7 @@ mqttClient.on("message", (topic, message) => {
 
     activePowerController.adicionaActivePower(ultimoDadoMQTT)
       .then(() => {
-        console.log("Dados salvos com sucesso no banco de dados.");
+        console.log("Dados de Potência Ativa salvos com sucesso no banco de dados.");
       })
       .catch((error) => {
         console.error("Erro ao salvar dados no banco de dados:", error);
@@ -76,7 +78,7 @@ mqttClient.on("message", (topic, message) => {
 
     currentController.adicionaCurrent(ultimoDadoMQTT)
       .then(() => {
-        console.log("Dados salvos com sucesso no banco de dados.");
+        console.log("Dados de Corrente salvos com sucesso no banco de dados.");
       })
       .catch((error) => {
         console.error("Erro ao salvar dados no banco de dados:", error);
@@ -84,11 +86,21 @@ mqttClient.on("message", (topic, message) => {
 
     consumptionController.adicionaConsumption(ultimoDadoMQTT)
       .then(() => {
+        console.log("Dados de Consumo salvos com sucesso no banco de dados.");
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar dados no banco de dados:", error);
+      });
+
+    generationController.adicionaGeneration(ultimoDadoMQTT)
+      .then(() => {
         console.log("Dados salvos com sucesso no banco de dados.");
       })
       .catch((error) => {
         console.error("Erro ao salvar dados no banco de dados:", error);
       });
+
+
 
   }
 });
@@ -123,7 +135,7 @@ app.get("/api", async (req, res) => {
     "CURRENT",
     "BUSINESS",
     "CONSUMPTION",
-    "GENERATED",
+    "GENERATION",
     "MYUSER",
     "USER_BUSINESS",
   ];
