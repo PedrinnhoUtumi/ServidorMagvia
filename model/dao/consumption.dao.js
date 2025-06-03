@@ -31,7 +31,6 @@ exports.adicionaConsumption = async (ultimoDadoMQTT) => {
       .slice(0, 19)
       .replace("T", " ");
 
-    // Validação básica dos dados
     const { epa_c, epb_c, epc_c, ept_c } = ultimoDadoMQTT;
     if ([epa_c, epb_c, epc_c, ept_c].some((val) => val === undefined || val === null)) {
       console.error("Erro: algum valor de potência ativa está indefinido.");

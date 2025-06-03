@@ -7,18 +7,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const mqtt = require("mqtt");
 
-const activePowerController = require("./controller/activePower.controller");
-const voltageController = require("./controller/voltage.controller");
-const currentController = require("./controller/current.controller");
-const consumptionController = require("./controller/consumption.controller");
-const generationController = require("./controller/generation.controller");
+const allInsertsController = require("./controller/allInserts.controller");
 const todasAsTabelasController = require("./controller/todasAsTabelas.controller");
+const myUserController = require("./controller/myUser.controller");
 
 const activePower = require("./entities/activePower");
 const voltage = require("./entities/voltage");
 const current = require("./entities/current");
 const consumption = require("./entities/consumption");
 const generation = require("./entities/generation");
+const myUser = require("./entities/myUser");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -60,49 +58,7 @@ mqttClient.on("message", (topic, message) => {
       timestamp: new Date().toISOString(),
       ...dados,
     };
-
-    voltageController.adicionaVoltage(ultimoDadoMQTT)
-      .then(() => {
-        console.log("Dados de tensão salvos com sucesso no banco de dados.");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar dados de tensão no banco de dados:", error);
-      })
-
-    activePowerController.adicionaActivePower(ultimoDadoMQTT)
-      .then(() => {
-        console.log("Dados de Potência Ativa salvos com sucesso no banco de dados.");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar dados no banco de dados:", error);
-      });
-
-    currentController.adicionaCurrent(ultimoDadoMQTT)
-      .then(() => {
-        console.log("Dados de Corrente salvos com sucesso no banco de dados.");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar dados no banco de dados:", error);
-      });
-
-    consumptionController.adicionaConsumption(ultimoDadoMQTT)
-      .then(() => {
-        console.log("Dados de Consumo salvos com sucesso no banco de dados.");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar dados no banco de dados:", error);
-      });
-
-    generationController.adicionaGeneration(ultimoDadoMQTT)
-      .then(() => {
-        console.log("Dados salvos com sucesso no banco de dados.");
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar dados no banco de dados:", error);
-      });
-
-
-
+    allInsertsController.adicionaTodosOsDados(ultimoDadoMQTT)
   }
 });
 
@@ -131,98 +87,60 @@ app.get("/", (req, res) => {
 
 app.get("/api", todasAsTabelasController.listaTodasAsTabelas);
 
-// app.get("/monitor", (req, res) => {
-//   console.log(ultimoDadoMQTT);
-//   if (Object.keys(ultimoDadoMQTT).length === 0) {
-    
-//     return res.send("ERRO");
-//   }
-
-//   const dados = {
-//     potenciaAtiva: {
-//       pa: parseFloat(ultimoDadoMQTT.pa),
-//       pb: parseFloat(ultimoDadoMQTT.pb),
-//       pc: parseFloat(ultimoDadoMQTT.pc),
-//       pt: parseFloat(ultimoDadoMQTT.pt),
-//     },
-//     potenciaReativa: {
-//       qa: parseFloat(ultimoDadoMQTT.qa),
-//       qb: parseFloat(ultimoDadoMQTT.qb),
-//       qc: parseFloat(ultimoDadoMQTT.qc),
-//       qt: parseFloat(ultimoDadoMQTT.qt),
-//     },
-//     tensoes: {
-//       uarms: parseFloat(ultimoDadoMQTT.uarms),
-//       ubrms: parseFloat(ultimoDadoMQTT.ubrms),
-//       ucrms: parseFloat(ultimoDadoMQTT.ucrms),
-//     },
-//     correntes: {
-//       iarms: parseFloat(ultimoDadoMQTT.iarms),
-//       ibrms: parseFloat(ultimoDadoMQTT.ibrms),
-//       icrms: parseFloat(ultimoDadoMQTT.icrms),
-//       itrms: parseFloat(ultimoDadoMQTT.itrms),
-//     },
-//     fatorPotencia: {
-//       pfa: parseFloat(ultimoDadoMQTT.pfa),
-//       pfb: parseFloat(ultimoDadoMQTT.pfb),
-//       pfc: parseFloat(ultimoDadoMQTT.pfc),
-//       pft: parseFloat(ultimoDadoMQTT.pft),
-//     },
-//     frequencia: {
-//       freq: parseFloat(ultimoDadoMQTT.freq),
-//     },
-//     timestamp: ultimoDadoMQTT.timestamp
-//   };
-
-//   res.json({ message: dados });
-// });
-
 app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
-
+  const novoUsuario = new myUser(nome, email, senha, role, account);
   try {
-    const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
-    const maxIdResponse = await axios.post(
-      url,
-      { q: maxIdQuery },
-      {
-        auth: {
-          username: "sys",
-          password: "manager",
-        },
-      }
-    );
-    let novoId = 1;
-    console.log(maxIdResponse.data.data.rows[0][0]);
-
-    const resultado = maxIdResponse.data.data.rows[0][0];
-    if (resultado) {
-      novoId = resultado + 1;
-    }
-
-    console.log(`Novo ID: ${novoId}`);
-
-    const query = `
-    INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-    VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
-  `;
-    const response = await axios.post(
-      url,
-      { q: query },
-      {
-        auth: {
-          username: "sys",
-          password: "manager",
-        },
-      }
-    );
-    res
-      .status(201)
-      .json({ message: "Usuário criado com sucesso", response: response.data });
+    const resultado = await myUserController.adicionaUser(novoUsuario);
+    res.status(201).json({ message: resultado });
   } catch (error) {
-    console.error("Erro ao buscar myuser:", error.message);
-    res.status(500).json({ error: "Erro ao buscar myuser" });
+    console.error("Erro ao adicionar usuário:", error.message);
+    res.status(500).json({ error: "Erro ao adicionar usuário" });
   }
+
+  // try {
+  //   const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
+  //   const maxIdResponse = await axios.post(
+  //     url,
+  //     { q: maxIdQuery },
+  //     {
+  //       auth: {
+  //         username: "sys",
+  //         password: "manager",
+  //       },
+  //     }
+  //   );
+  //   let novoId = 1;
+  //   console.log(maxIdResponse.data.data.rows[0][0]);
+
+  //   const resultado = maxIdResponse.data.data.rows[0][0];
+  //   if (resultado) {
+  //     novoId = resultado + 1;
+  //   }
+
+  //   console.log(`Novo ID: ${novoId}`);
+
+  //   const query = `
+  //   INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
+  //   VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
+  // `;
+  //   const response = await axios.post(
+  //     url,
+  //     { q: query },
+  //     {
+  //       auth: {
+  //         username: "sys",
+  //         password: "manager",
+  //       },
+  //     }
+  //   );
+  //   res
+  //     .status(201)
+  //     .json({ message: "Usuário criado com sucesso", response: response.data });
+  // } catch (error) {
+  //   console.error("Erro ao buscar myuser:", error.message);
+  //   res.status(500).json({ error: "Erro ao buscar myuser" });
+  // }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
@@ -232,5 +150,3 @@ app.listen(PORT, '0.0.0.0', () => {
 // SALVANDO COMANDOS
 // ngrok config add-authtoken 2wN8FoCzGqhT2tAoannVHp31mFY_p7ZPVxQF9H5EfiwLBSVh
 // ngrok http 192.168.10.250:5654
-
-
