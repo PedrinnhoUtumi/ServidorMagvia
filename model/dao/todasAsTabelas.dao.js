@@ -16,7 +16,7 @@ exports.listaTodasAsTabelas = async (req, res) => {
   const resultados = await Promise.all(
     tabelas.map((tabela) => {
       const query = {
-        q: `SELECT * FROM ${tabela} ORDER BY ID`,
+        q: `SELECT * FROM ${tabela}`,
         format: "json",
         timeformat: "default",
         tz: "local",

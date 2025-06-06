@@ -1,35 +1,28 @@
 const axios = require("axios");
+const { v4: uuidv4 } = require("uuid");
 
 exports.adicionaGeneration = async (ultimoDadoMQTT) => {
   const url = "http://192.168.10.250:5654/db/query";
+  function getDataFormatoMachbase() {
+    const agora = new Date();
+
+    const horaBrasilia = new Date(agora.getTime() - 60000);
+
+    const ano = horaBrasilia.getFullYear();
+    const mes = String(horaBrasilia.getMonth() + 1).padStart(2, '0');
+    const dia = String(horaBrasilia.getDate()).padStart(2, '0');
+    const hora = String(horaBrasilia.getHours()).padStart(2, '0');
+    const minuto = String(horaBrasilia.getMinutes()).padStart(2, '0');
+    const segundo = String(horaBrasilia.getSeconds()).padStart(2, '0');
+    const hoje = `${ano}-${mes}-${dia} ${hora}:${parseInt(minuto) + 1}:${segundo}`;
+
+    return `${ano}-${mes}-${dia} ${hora}:${minuto}:${segundo}`;
+  }
 
   try {
-    const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM GENERATION`;
-    const maxIdResponse = await axios.post(
-      url,
-      { q: maxIdQuery },
-      {
-        auth: {
-          username: "sys",
-          password: "manager",
-        },
-      }
-    );
+    let novoId = uuidv4();
 
-    let novoId = 1;
-    const resultado = maxIdResponse?.data?.data?.rows?.[0]?.[0];
-
-    console.log("Resultado do MAX ID:", resultado);
-
-    if (resultado !== null && resultado !== undefined) {
-      novoId = parseInt(resultado) + 1;
-    }
-
-    const dataAtual = new Date();
-    const dataFormatada = dataAtual
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
+    const dataFormatada = getDataFormatoMachbase();
 
     const { epa_g, epb_g, epc_g, ept_g } = ultimoDadoMQTT;
     if ([epa_g, epb_g, epc_g, ept_g].some((val) => val === undefined || val === null)) {

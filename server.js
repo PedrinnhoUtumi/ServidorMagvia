@@ -87,6 +87,7 @@ app.get("/", (req, res) => {
 
 app.get("/api", todasAsTabelasController.listaTodasAsTabelas);
 
+
 app.post("/api/MYUSER", async (req, res) => {
   const { nome, email, senha, role, account } = req.body;
   const novoUsuario = new myUser(nome, email, senha, role, account);
@@ -97,50 +98,6 @@ app.post("/api/MYUSER", async (req, res) => {
     console.error("Erro ao adicionar usuário:", error.message);
     res.status(500).json({ error: "Erro ao adicionar usuário" });
   }
-
-  // try {
-  //   const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
-  //   const maxIdResponse = await axios.post(
-  //     url,
-  //     { q: maxIdQuery },
-  //     {
-  //       auth: {
-  //         username: "sys",
-  //         password: "manager",
-  //       },
-  //     }
-  //   );
-  //   let novoId = 1;
-  //   console.log(maxIdResponse.data.data.rows[0][0]);
-
-  //   const resultado = maxIdResponse.data.data.rows[0][0];
-  //   if (resultado) {
-  //     novoId = resultado + 1;
-  //   }
-
-  //   console.log(`Novo ID: ${novoId}`);
-
-  //   const query = `
-  //   INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-  //   VALUES ('${novoId}', '${nome}', '${email}', '${senha}', '${role}', '${account}')
-  // `;
-  //   const response = await axios.post(
-  //     url,
-  //     { q: query },
-  //     {
-  //       auth: {
-  //         username: "sys",
-  //         password: "manager",
-  //       },
-  //     }
-  //   );
-  //   res
-  //     .status(201)
-  //     .json({ message: "Usuário criado com sucesso", response: response.data });
-  // } catch (error) {
-  //   console.error("Erro ao buscar myuser:", error.message);
-  //   res.status(500).json({ error: "Erro ao buscar myuser" });
-  // }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
