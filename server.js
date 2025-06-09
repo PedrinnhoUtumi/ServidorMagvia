@@ -10,6 +10,7 @@ const mqtt = require("mqtt");
 const allInsertsController = require("./controller/allInserts.controller");
 const todasAsTabelasController = require("./controller/todasAsTabelas.controller");
 const myUserController = require("./controller/myUser.controller");
+const tabelasSemInsercaoController = require("./controller/tabelasSemInsercao.controller");
 
 const activePower = require("./entities/activePower");
 const voltage = require("./entities/voltage");
@@ -85,7 +86,23 @@ app.get("/", (req, res) => {
     `);
 });
 
-app.get("/api", todasAsTabelasController.listaTodasAsTabelas);
+app.get("/api", async (req, res) => {
+  try {
+    const [tabelasComInsercao, tabelasSemInsercao] = await Promise.all([
+      todasAsTabelasController.listaTodasAsTabelas(),
+      tabelasSemInsercaoController.listaTodasAsTabelas(),
+    ]);
+
+    res.status(200).json({
+      insercao: tabelasComInsercao,
+      semInsercao: tabelasSemInsercao,
+    });
+  } catch (error) {
+    console.error("Erro ao obter dados:", error);
+    res.status(500).json({ error: "Erro ao obter dados das tabelas" });
+  }
+});
+
 
 
 app.post("/api/MYUSER", async (req, res) => {

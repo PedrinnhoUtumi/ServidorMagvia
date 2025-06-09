@@ -3,17 +3,15 @@ const url = "http://192.168.10.250:5654/db/query";
 
 exports.listaTodasAsTabelas = async () => {
   const tabelas = [
-    "ACTIVEPOWER",
-    "VOLTAGE",
-    "CURRENT",
-    "CONSUMPTION",
-    "GENERATION",
+    "MYUSER", 
+    "BUSINESS", 
+    "USER_BUSINESS"
   ];
 
   const resultados = await Promise.all(
     tabelas.map((tabela) => {
       const query = {
-        q: `SELECT * FROM ${tabela} ORDER BY TIME DESC`,
+        q: `SELECT * FROM ${tabela}`,
         format: "json",
         timeformat: "default",
         tz: "local",

@@ -1,8 +1,8 @@
-const todasAsTabelasDAO = require('../model/dao/todasAsTabelas.dao');
+const tabelasSemInsercaoDAO = require('../model/dao/tabelasSemInsercao.dao');
 
 exports.listaTodasAsTabelas = async (req, res) => {
     try {
-        return await todasAsTabelasDAO.listaTodasAsTabelas();
+        return await tabelasSemInsercaoDAO.listaTodasAsTabelas();
     } catch (error) {
         console.error("Erro ao obter dados das tabelas:", error);
     }
