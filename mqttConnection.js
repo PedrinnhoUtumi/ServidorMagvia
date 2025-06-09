@@ -9,7 +9,7 @@ const mqttOptions = {
 };
 
 const mqttClient = mqtt.connect(mqttUrl, mqttOptions);
-exports.conexaoMQTT = () => {
+exports.ativaConexaoMQTT = () => {
     let ultimoDadoMQTT = {}; 
     mqttClient.on("connect", () => {
       console.log("Conectado ao broker MQTT");

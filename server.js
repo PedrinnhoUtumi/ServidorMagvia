@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
 
-mqttConnection.conexaoMQTT()
+mqttConnection.ativaConexaoMQTT()
 
 app.get("/", (req, res) => {
   res.send(`Servidor ONLINE! Acesse a API em http://localhost:${PORT}/api`);
