@@ -55,3 +55,71 @@ exports.adicionaActivePower = async (ultimoDadoMQTT) => {
     }
   }
 };
+
+
+// const Dados recebidos: {
+//   id: '1',
+
+// Potencia ativa
+//   pa: '57.01',
+//   pb: '5.82',
+//   pc: '48.89',
+//   pt: '111.88',
+
+// Potencia reativa
+//   qa: '-12.72',
+//   qb: '-31.26',
+//   qc: '-67.43',
+//   qt: '-111.27',
+
+// Potencia aparente
+//   sa: '58.24',
+//   sb: '31.57',
+//   sc: '83.22',
+//   st: '157.56',
+
+// Tensões
+//   uarms: '127.50',
+//   ubrms: '127.52',
+//   ucrms: '127.40',
+
+// Correntes
+//   iarms: '0.46',
+//   ibrms: '0.28',
+//   icrms: '0.64',
+//   itrms: '0.00',
+
+// Fator de potencia
+//   pfa: '0.97',
+//   pfb: '0.18',
+//   pfc: '0.58',
+//   pft: '0.71',
+
+// Angulo entre tensao e corrente
+//   pga: '-90.00',
+//   pgb: '-89.98',
+//   pgc: '-90.00',
+
+// Frequência
+//   freq: '60.00',
+
+// Consumo
+//   epa_c: '2841.11',
+//   epb_c: '2398.63',
+//   epc_c: '2739.79',
+//   ept_c: '8139.02',
+
+// Geração
+//   epa_g: '0.00',
+//   epb_g: '0.03',
+//   epc_g: '0.33',
+//   ept_g: '0.00',
+
+// Angulo entre tensoes
+//   yuaub: '120.13',
+//   yuauc: '239.97',
+//   yubuc: '119.55',
+
+// Temperatura do equipamento
+//   tpsd: '25.00'
+// }
