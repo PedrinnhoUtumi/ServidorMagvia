@@ -123,3 +123,7 @@ exports.adicionaActivePower = async (ultimoDadoMQTT) => {
 // Temperatura do equipamento
 //   tpsd: '25.00'
 // }
+
+
+// criar um filtro de horario em tecnico e no componente Pagina
+// adicionar tabelas restantes na pagina tecnico
