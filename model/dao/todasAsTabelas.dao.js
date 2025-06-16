@@ -8,6 +8,13 @@ exports.listaTodasAsTabelas = async () => {
     "CURRENT",
     "CONSUMPTION",
     "GENERATION",
+    "ANGLEBETWEENVOLTAGES",
+    "ANGLEVOLTAGECURRENT",
+    "APPARENTPOWER",
+    "EQUIPMENTTEMPERATURE",
+    "FREQUENCY",
+    "POWERFACTOR",
+    "REACTIVEPOWER",
   ];
 
   const resultados = await Promise.all(

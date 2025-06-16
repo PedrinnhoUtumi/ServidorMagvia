@@ -66,17 +66,17 @@ exports.adicionaActivePower = async (ultimoDadoMQTT) => {
 //   pc: '48.89',
 //   pt: '111.88',
 
-// Potencia reativa
-//   qa: '-12.72',
-//   qb: '-31.26',
-//   qc: '-67.43',
-//   qt: '-111.27',
+// // Potencia reativa
+// //   qa: '-12.72',
+// //   qb: '-31.26',
+// //   qc: '-67.43',
+// //   qt: '-111.27',
 
-// Potencia aparente
-//   sa: '58.24',
-//   sb: '31.57',
-//   sc: '83.22',
-//   st: '157.56',
+// // Potencia aparente
+// //   sa: '58.24',
+// //   sb: '31.57',
+// //   sc: '83.22',
+// //   st: '157.56',
 
 // Tensões
 //   uarms: '127.50',
@@ -89,19 +89,19 @@ exports.adicionaActivePower = async (ultimoDadoMQTT) => {
 //   icrms: '0.64',
 //   itrms: '0.00',
 
-// Fator de potencia
-//   pfa: '0.97',
-//   pfb: '0.18',
-//   pfc: '0.58',
-//   pft: '0.71',
+// // Fator de potencia
+// //   pfa: '0.97',
+// //   pfb: '0.18',
+// //   pfc: '0.58',
+// //   pft: '0.71',
 
-// Angulo entre tensao e corrente
-//   pga: '-90.00',
-//   pgb: '-89.98',
-//   pgc: '-90.00',
+// // Angulo entre tensao e corrente
+// //   pga: '-90.00',
+// //   pgb: '-89.98',
+// //   pgc: '-90.00',
 
-// Frequência
-//   freq: '60.00',
+// // Frequência
+// //   freq: '60.00',
 
 // Consumo
 //   epa_c: '2841.11',
@@ -115,11 +115,11 @@ exports.adicionaActivePower = async (ultimoDadoMQTT) => {
 //   epc_g: '0.33',
 //   ept_g: '0.00',
 
-// Angulo entre tensoes
-//   yuaub: '120.13',
-//   yuauc: '239.97',
-//   yubuc: '119.55',
+// // Angulo entre tensoes
+// //   yuaub: '120.13',
+// //   yuauc: '239.97',
+// //   yubuc: '119.55',
 
-// Temperatura do equipamento
-//   tpsd: '25.00'
-// }
+// // Temperatura do equipamento
+// //   tpsd: '25.00'
+// // }
