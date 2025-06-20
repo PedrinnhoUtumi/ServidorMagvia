@@ -24,10 +24,13 @@ app.get("/", (req, res) => {
   res.send(`Servidor ONLINE! Acesse a API em http://localhost:${PORT}/api`);
 });
 
-app.get("/api", async (req, res) => {
+app.get("/api/:inicio/:fim", async (req, res) => {
+  const { inicio, fim } = req.params;
+  console.log(`Requisição recebida para o intervalo: ${inicio} a ${fim}`);
+  
   try {
     const [tabelasComInsercao, tabelasSemInsercao] = await Promise.all([
-      todasAsTabelasController.listaTodasAsTabelas(),
+      todasAsTabelasController.listaTodasAsTabelas(inicio, fim),
       tabelasSemInsercaoController.listaTodasAsTabelas(),
     ]);
 

@@ -1,7 +1,7 @@
 const axios = require("axios");
 const url = "http://192.168.10.250:5654/db/query";
 
-exports.listaTodasAsTabelas = async () => {
+exports.listaTodasAsTabelas = async (inicio, fim) => {
   const tabelas = [
     "ACTIVEPOWER",
     "VOLTAGE",
@@ -32,7 +32,7 @@ exports.listaTodasAsTabelas = async () => {
   const resultados = await Promise.all(
     tabelas.map((tabela) => {
       const query = {
-        q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${diaAtual} 00:00:00' and '${diaAtual} 23:59:59' ORDER BY TIME DESC`,
+        q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC`,
         format: "json",
         timeformat: "default",
         tz: "local",
