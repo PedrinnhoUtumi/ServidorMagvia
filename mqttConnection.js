@@ -23,16 +23,20 @@ exports.ativaConexaoMQTT = () => {
     });
     
     mqttClient.on("message", (topic, message) => {
-      console.log("Tópico:", topic);
-      console.log("Mensagem recebida:", message.toString());
-      if (topic === "/api/energia/monitor") {
-        const dados = JSON.parse(message.toString());
-        console.log("Dados recebidos:", dados);
-        ultimoDadoMQTT = {
-          timestamp: new Date().toISOString(),
-          ...dados,
-        };
-        allInsertsController.adicionaTodosOsDados(ultimoDadoMQTT)
+      try {
+        console.log("Tópico:", topic);
+        console.log("Mensagem recebida:", message.toString());
+        if (topic === "/api/energia/monitor") {
+          const dados = JSON.parse(message.toString());
+          console.log("Dados recebidos:", dados);
+          ultimoDadoMQTT = {
+            timestamp: new Date().toISOString(),
+            ...dados,
+          };
+          allInsertsController.adicionaTodosOsDados(ultimoDadoMQTT)
+        }
+      } catch (error) {
+        console.error("Erro ao processar mensagem MQTT:", error.message); 
       }
     });
     
