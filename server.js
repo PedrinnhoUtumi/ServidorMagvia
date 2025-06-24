@@ -24,9 +24,11 @@ app.get("/", (req, res) => {
   res.send(`Servidor ONLINE! Acesse a API em http://localhost:${PORT}/api`);
 });
 
-app.get("/api/:inicio/:fim", async (req, res) => {
-  const { inicio, fim } = req.params;
+app.get("/api", async (req, res) => {
+  
+  const { inicio, fim } = req.query;
   console.log(`Requisição recebida para o intervalo: ${inicio} a ${fim}`);
+  console.log(`Requisição recebida para /api/:${encodeURIComponent(inicio)}/:${encodeURIComponent(fim)}`);
   
   try {
     const [tabelasComInsercao, tabelasSemInsercao] = await Promise.all([
@@ -53,6 +55,33 @@ app.post("/api/MYUSER", async (req, res) => {
   } catch (error) {
     console.error("Erro ao adicionar usuário:", error.message);
     res.status(500).json({ error: "Erro ao adicionar usuário" });
+  }
+});
+
+// app.put("/api/MYUSER/:id/:nome/:email/:role/:account", async (req, res) => {
+//   const { nome, email, role, account } = req.params;
+//   const { id } = req.params;
+//   const novoUsuario = new myUser(nome, email, role, account);
+//   try {
+//     const resultado = await myUserController.alteraUser(novoUsuario, id);
+//     res.status(201).json({ message: resultado });
+//   } catch (error) {
+//     console.error("Erro ao adicionar usuário:", error.message);
+//     res.status(500).json({ error: error });
+//   }
+// });
+
+app.put("/api/MYUSER/:id", async (req, res) => {
+  const { nome, email, role, account } = req.body;
+  const { id } = req.params;
+  const senha = null
+  const novoUsuario = new myUser(nome, email, senha, role, account);
+  try {
+    const resultado = await myUserController.alteraUser(novoUsuario, id);
+    res.status(201).json({ message: resultado });
+  } catch (error) {
+    console.error("Erro ao adicionar usuário:", error.message);
+    res.status(500).json({ error: error });
   }
 });
 

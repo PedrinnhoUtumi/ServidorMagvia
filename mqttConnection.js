@@ -6,6 +6,8 @@ const mqttOptions = {
   clean: true,
   connectTimeout: 4000,
   protocolVersion: 5,
+  reconnectPeriod: 5000,
+  keepalive: 30,
 };
 
 const mqttClient = mqtt.connect(mqttUrl, mqttOptions);
