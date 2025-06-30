@@ -120,6 +120,10 @@ app.get("/api", async (req, res) => {
   const { inicio, fim } = req.query;
   console.log(`Requisição recebida para o intervalo: ${inicio} a ${fim}`);
   console.log(`Requisição recebida para /api/:${encodeURIComponent(inicio)}/:${encodeURIComponent(fim)}`);
+  
+  if (!inicio || !fim || isNaN(new Date(inicio)) || isNaN(new Date(fim))) {
+    return res.status(400).json({error: `Parâmetros inválidos para Machbase: inicio=${inicio}, fim=${fim}`})
+  }
   try {
     const [tabelasComInsercao, tabelasSemInsercao] = await Promise.all([
       todasAsTabelasController.listaTodasAsTabelas(inicio, fim),

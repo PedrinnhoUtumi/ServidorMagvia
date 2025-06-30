@@ -16,37 +16,41 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
     "POWERFACTOR",
     "REACTIVEPOWER",
   ];
-  function getDia() {
-    const agora = new Date();
+  // function getDia() {
+  //   const agora = new Date();
 
-    const horaBrasilia = new Date(agora.getTime() - 60000);
+  //   const horaBrasilia = new Date(agora.getTime() - 60000);
 
-    const ano = horaBrasilia.getFullYear();
-    const mes = String(horaBrasilia.getMonth() + 1).padStart(2, '0');
-    const dia = String(horaBrasilia.getDate()).padStart(2, '0');
+  //   const ano = horaBrasilia.getFullYear();
+  //   const mes = String(horaBrasilia.getMonth() + 1).padStart(2, '0');
+  //   const dia = String(horaBrasilia.getDate()).padStart(2, '0');
 
-    return `${ano}-${mes}-${dia}`;
+  //   return `${ano}-${mes}-${dia}`;
+  // }
+  // const diaAtual = getDia();
+  let resultados
+  try {
+    resultados = await Promise.all(
+      tabelas.map((tabela) => {
+        const query = {
+          q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC`,
+          format: "json",
+          timeformat: "default",
+          tz: "local",
+          precision: 2,
+        };
+  
+        return axios.post(url, query, {
+          auth: {
+            username: "sys",
+            password: "manager",
+          },
+        });
+      })
+    );
+  } catch (error) {
+    console.log("Erro ao obter dados:", error.message);
   }
-  const diaAtual = getDia();
-
-  const resultados = await Promise.all(
-    tabelas.map((tabela) => {
-      const query = {
-        q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC LIMIT 500`,
-        format: "json",
-        timeformat: "default",
-        tz: "local",
-        precision: 2,
-      };
-
-      return axios.post(url, query, {
-        auth: {
-          username: "sys",
-          password: "manager",
-        },
-      });
-    })
-  );
   const dados = {};
   tabelas.forEach((tabela, index) => {
     dados[tabela] = resultados[index].data;
