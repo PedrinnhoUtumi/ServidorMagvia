@@ -16,22 +16,12 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
     "POWERFACTOR",
     "REACTIVEPOWER",
   ];
-  // function getDia() {
-  //   const agora = new Date();
 
-  //   const horaBrasilia = new Date(agora.getTime() - 60000);
+  let resultados = [];
 
-  //   const ano = horaBrasilia.getFullYear();
-  //   const mes = String(horaBrasilia.getMonth() + 1).padStart(2, '0');
-  //   const dia = String(horaBrasilia.getDate()).padStart(2, '0');
-
-  //   return `${ano}-${mes}-${dia}`;
-  // }
-  // const diaAtual = getDia();
-  let resultados
   try {
     resultados = await Promise.all(
-      tabelas.map((tabela) => {
+      tabelas.map(async (tabela) => {
         const query = {
           q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC`,
           format: "json",
@@ -39,21 +29,34 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
           tz: "local",
           precision: 2,
         };
-  
-        return axios.post(url, query, {
-          auth: {
-            username: "sys",
-            password: "manager",
-          },
-        });
+
+        try {
+          const response = await axios.post(url, query, {
+            auth: {
+              username: "sys",
+              password: "manager",
+            },
+          });
+          return response;
+        } catch (err) {
+          console.error(`❌ Erro ao consultar a tabela ${tabela}:`, err.message);
+          return null;
+        }
       })
     );
-  } catch (error) {
-    console.log("Erro ao obter dados:", error.message);
+  } catch (err) {
+    console.error("❌ Erro inesperado durante Promise.all:", err.message);
+    return {};
   }
+
   const dados = {};
   tabelas.forEach((tabela, index) => {
-    dados[tabela] = resultados[index].data;
+    const resultado = resultados[index];
+    if (resultado && resultado.data) {
+      dados[tabela] = resultado.data;
+    } else {
+      dados[tabela] = { data: { columns: [], rows: [] } }; // ou null
+    }
   });
 
   return dados;
