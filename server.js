@@ -179,5 +179,5 @@ app.put("/api/MYUSER/:id", async (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor Node.js rodando em http://localhost:${PORT});`)
+  console.log(`Servidor Node.js rodando em http://localhost:${PORT}`)
 });

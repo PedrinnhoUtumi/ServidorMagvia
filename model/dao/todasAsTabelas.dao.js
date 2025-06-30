@@ -32,7 +32,7 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
   const resultados = await Promise.all(
     tabelas.map((tabela) => {
       const query = {
-        q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC`,
+        q: `SELECT * FROM ${tabela} WHERE TIME BETWEEN '${inicio}' AND '${fim}' ORDER BY TIME DESC LIMIT 500`,
         format: "json",
         timeformat: "default",
         tz: "local",
