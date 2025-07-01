@@ -55,7 +55,7 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
     if (resultado && resultado.data) {
       dados[tabela] = resultado.data;
     } else {
-      dados[tabela] = { data: { columns: [], rows: [] } }; // ou null
+      dados[tabela] = { data: { columns: [], rows: [] } }; 
     }
   });
 
