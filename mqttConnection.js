@@ -1,6 +1,7 @@
 const allInsertsController = require("./controller/allInserts.controller");
 const mqtt = require("mqtt");
-const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
+// const mqttUrl = "ws://192.168.10.250:5654/web/api/mqtt";
+const mqttUrl = "ws://192.168.3.8:5654/web/api/mqtt";
 
 const mqttOptions = {
   clean: true,
