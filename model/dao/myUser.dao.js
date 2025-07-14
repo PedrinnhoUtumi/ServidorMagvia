@@ -1,7 +1,8 @@
 const axios = require("axios");
 
 exports.adicionaUser = async (novoUsuario) => {
-  const url = "http://192.168.3.8:5654/db/query";
+  const url = "http://192.168.3.84:5654/db/query";
+  // const url = "http://192.168.3.8:5654/db/query";
   // const url = "http://192.168.10.250:5654/db/query";
   const maxIdQuery = `SELECT MAX(ID) AS MAX_ID FROM MYUSER`;
   const maxIdResponse = await axios.post(
@@ -42,7 +43,8 @@ exports.adicionaUser = async (novoUsuario) => {
 };
 
 exports.alteraUser = async (usuarioAlterado, id) => {
-  const url = "http://192.168.3.8:5654/db/query";
+  const url = "http://192.168.3.84:5654/db/query";
+  // const url = "http://192.168.3.8:5654/db/query";
   // const url = "http://192.168.10.250:5654/db/query";
 
   const query = `
