@@ -64,6 +64,8 @@ app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
+app.post("/api/login", myUserController.loginUser);
+
 // app.put("/api/MYUSER/:id/:nome/:email/:role/:account", async (req, res) => {
 //   const { nome, email, role, account } = req.params;
 //   const { id } = req.params;
