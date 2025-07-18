@@ -81,10 +81,8 @@ exports.getUserByEmail = async (email) => {
       },
     }
   );
-  console.log("Response from getUserByEmail:", response.data);
 
   const rows = response.data.data.rows;
-  console.log("Rows from getUserByEmail:", rows);
 
   if (rows.length === 0) return null;
 
