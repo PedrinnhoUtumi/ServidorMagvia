@@ -1,5 +1,5 @@
 const axios = require("axios");
-const url = "http://192.168.3.84:5654/db/query";
+const url = "http://192.168.3.83:5654/db/query";
   // const url = "http://192.168.3.8:5654/db/query";
   // const url = "http://192.168.10.250:5654/db/query";
 
@@ -19,6 +19,21 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
     "REACTIVEPOWER",
   ];
 
+  const inicioDate = new Date(inicio.replace(" ", "T"));
+  const fimDate    = new Date(fim   .replace(" ", "T"));
+  const msPorDia   = 1000 * 60 * 60 * 24;
+  let dias         = Math.ceil(fimDate - inicioDate) / msPorDia;
+
+  const diasParaCalc = Math.min(dias, 60);
+
+  // define step: 1 = sem amostragem, >1 = pula linhas
+  let step = 1;
+  if (diasParaCalc > 1) {
+    // ceil(dias/4)*4: (2–4)=>4, (5–8)=>8, ...
+    step = Math.ceil(diasParaCalc / 4) * 4;
+  }
+
+  console.log(`Consultando tabelas: ${tabelas.join(", ")} entre ${inicioDate} e ${fimDate}`);
   let resultados = [];
 
   try {
@@ -52,14 +67,19 @@ exports.listaTodasAsTabelas = async (inicio, fim) => {
   }
 
   const dados = {};
-  tabelas.forEach((tabela, index) => {
-    const resultado = resultados[index];
-    if (resultado && resultado.data) {
-      dados[tabela] = resultado.data;
+  tabelas.forEach((tabela, idx) => {
+    const res = resultados[idx];
+    if (res && res.data && res.data.data) {
+      const tableData = res.data.data;
+      if (step > 1) {
+        tableData.rows = tableData.rows.filter((_, i) => i % step === 0);
+      }
+      dados[tabela] = { data: tableData };
     } else {
-      dados[tabela] = { data: { columns: [], rows: [] } }; 
+      dados[tabela] = { data: { columns: [], rows: [] } };
     }
   });
+
 
   return dados;
 };
