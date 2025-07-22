@@ -41,3 +41,37 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: "Erro interno no servidor" });
   }
 };
+
+exports.getHash = async (senha) => {
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(senha, salt);
+  return hash;
+};
+
+exports.criarUsuario = async (req, res) => {
+  try {
+    const { nome, email, senha, role, account } = req.body;
+
+    if (!nome || !email || !senha || !role || !account) {
+      return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+    }
+
+    const hash = await exports.getHash(senha);
+
+    const novoUsuario = {
+      nome,
+      email,
+      senha: hash,
+      role,
+      account,
+    };
+
+    const resultado = await myUserDAO.adicionaUser(novoUsuario);
+    delete resultado.senha;
+
+    return res.status(201).json({ usuario: resultado, message: "Usuário criado com sucesso." });
+  } catch (error) {
+    console.error("Erro ao adicionar usuário:", error);
+    return res.status(500).json({ message: "Erro interno no servidor." });
+  }
+};

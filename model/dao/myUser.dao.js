@@ -16,18 +16,14 @@ exports.adicionaUser = async (novoUsuario) => {
   );
 
   let novoId = 1;
-  const resultado = maxIdResponse.data.data.rows[0][0];
+  const resultado = maxIdResponse.data.data.rows[0][0]; 
   if (resultado) {
     novoId = resultado + 1;
   }
 
-  // 👉 Hash da senha antes de salvar:
-  const salt = await bcrypt.genSalt(10);
-  const senhaHash = await bcrypt.hash(novoUsuario.senha, salt);
-
   const query = `
     INSERT INTO MYUSER (ID, NAME, EMAIL, SENHA, ROLE, ACCOUNT)
-    VALUES ('${novoId}', '${novoUsuario.nome}', '${novoUsuario.email}', '${senhaHash}', '${novoUsuario.role}', '${novoUsuario.account}')
+    VALUES ('${novoId}', '${novoUsuario.nome}', '${novoUsuario.email}', '${novoUsuario.senha}', '${novoUsuario.role}', '${novoUsuario.account}')
   `;
 
   await axios.post(

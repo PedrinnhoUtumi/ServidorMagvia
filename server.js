@@ -48,17 +48,7 @@ app.get("/api", async (req, res) => {
   }
 });
 
-app.post("/api/MYUSER", async (req, res) => {
-  const { nome, email, senha, role, account } = req.body;
-  const novoUsuario = new myUser(nome, email, senha, role, account);
-  try {
-    const resultado = await myUserController.adicionaUser(novoUsuario);
-    res.status(201).json({ message: resultado });
-  } catch (error) {
-    console.error("Erro ao adicionar usuário:", error.message);
-    res.status(500).json({ error: "Erro ao adicionar usuário" });
-  }
-});
+app.post("/api/MYUSER", myUserController.criarUsuario);
 
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
