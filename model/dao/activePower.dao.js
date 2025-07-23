@@ -2,8 +2,8 @@ const axios = require("axios");
 const { v4: uuidv4 } = require("uuid");
 
 exports.adicionaActivePower = async (ultimoDadoMQTT) => {
-  // const url = "http://192.168.10.250:5654/db/query";
-  const url = "http://192.168.3.83:5654/db/query";
+  const url = "http://192.168.10.250:5654/db/query";
+  // const url = "http://192.168.3.83:5654/db/query";
   // const url = "http://192.168.3.8:5654/db/query";
   function getDataFormatoMachbase() {
     const agora = new Date();
