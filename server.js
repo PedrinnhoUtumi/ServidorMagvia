@@ -56,19 +56,6 @@ app.get(/^\/(?!api).*/, (req, res) => {
 
 app.post("/api/login", myUserController.loginUser);
 
-// app.put("/api/MYUSER/:id/:nome/:email/:role/:account", async (req, res) => {
-//   const { nome, email, role, account } = req.params;
-//   const { id } = req.params;
-//   const novoUsuario = new myUser(nome, email, role, account);
-//   try {
-//     const resultado = await myUserController.alteraUser(novoUsuario, id);
-//     res.status(201).json({ message: resultado });
-//   } catch (error) {
-//     console.error("Erro ao adicionar usuário:", error.message);
-//     res.status(500).json({ error: error });
-//   }
-// });
-
 app.put("/api/MYUSER/:id", async (req, res) => {
   const { nome, email, role, account } = req.body;
   const { id } = req.params;

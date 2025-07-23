@@ -5,5 +5,6 @@ exports.listaTodasAsTabelas = async (req, res) => {
         return await tabelasSemInsercaoDAO.listaTodasAsTabelas();
     } catch (error) {
         console.error("Erro ao obter dados das tabelas:", error);
+        throw error;
     }
 }
