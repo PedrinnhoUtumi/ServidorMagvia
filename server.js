@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 const todasAsTabelasController = require("./controller/todasAsTabelas.controller");
 const myUserController = require("./controller/myUser.controller");
 const tabelasSemInsercaoController = require("./controller/tabelasSemInsercao.controller");
+const machbaseAdcionaDados = require("./controller/machbase.controller");
 const mqttConnection = require("./mqttConnection");
 const myUser = require("./entities/myUser");
 
@@ -68,6 +69,11 @@ app.put("/api/MYUSER/:id", async (req, res) => {
     console.error("Erro ao adicionar usuário:", error.message);
     res.status(500).json({ error: error });
   }
+});
+
+app.get('/api/ultimos', async (req, res) => {
+  const dados = await machbaseAdcionaDados(); 
+  res.json(dados);
 });
 
 app.listen(PORT, '0.0.0.0', () => {
