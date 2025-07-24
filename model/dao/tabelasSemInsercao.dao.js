@@ -1,7 +1,7 @@
 const axios = require("axios");
 // const url = "http://192.168.3.83:5654/db/query";
   // const url = "http://192.168.3.8:5654/db/query";
-const url = "http://192.168.10.250:5654/db/query";
+const url = process.env.URL;
 
 exports.listaTodasAsTabelas = async () => {
   const tabelas = [
